@@ -27,38 +27,32 @@
         body {
             font-family: var(--serif);
             color: #000;
-            overflow-x: hidden;
+            overflow-x: clip;
             background: var(--maroon-night);
         }
 
         /* Background: 2 foto bersusun atas-bawah, fixed, aman untuk Android/iOS */
         .photo-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -3; display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; width: 100%;
+            height: 100vh; height: 100lvh;
+            z-index: -1; display: flex; flex-direction: column;
             background: var(--maroon-night);
             -webkit-transform: translateZ(0); transform: translateZ(0);
+            pointer-events: none;
         }
         .photo-bg div {
             flex: 1 1 50%; min-height: 0; width: 100%;
             background-size: cover; background-position: center; background-repeat: no-repeat;
         }
-
-        #maroon-overlay {
-            position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: -2; pointer-events: none;
+        .photo-bg::after {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
             background:
                 radial-gradient(ellipse at center, rgba(61,0,15,0.25) 0%, rgba(20,0,6,0.7) 100%),
                 linear-gradient(180deg, rgba(110,0,28,0.62), rgba(40,0,12,0.72));
         }
 
-        /* Grain statis (tanpa blend-mode & animasi, supaya tidak bikin layer hilang di iOS) */
-        body::after {
-            content: ''; position: fixed; top: 0; right: 0; bottom: 0; left: 0;
-            z-index: 50; pointer-events: none; opacity: 0.08;
-            background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%2523n)'/%3E%3C/svg%3E");
-        }
-
         .section {
-            min-height: 100vh; min-height: calc(var(--vh, 1vh) * 100);
+            min-height: 100vh; min-height: 100svh;
             display: flex; align-items: center; justify-content: center;
             padding: 40px 20px; opacity: 0; transition: opacity 1.8s ease; position: relative;
         }
@@ -68,7 +62,7 @@
             background: var(--paper);
             padding: 54px 40px 50px; max-width: 520px; width: 100%;
             text-align: center; position: relative; border-radius: 2px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.4);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
             animation: float 7s ease-in-out infinite;
         }
         .note::before {
@@ -104,7 +98,7 @@
             max-width: 600px; width: 100%; margin: 0 auto;
             background: var(--paper); padding: 84px 46px 70px;
             position: relative; border-radius: 2px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             background-image:
                 linear-gradient(180deg, rgba(128,0,32,0.06), transparent 140px),
                 repeating-linear-gradient(0deg, transparent 0 31px, rgba(128,0,32,0.045) 31px 32px);
@@ -216,8 +210,6 @@
         <div style="background-image:url('images/k4.png')"></div>
     </div>
 
-    <div id="maroon-overlay"></div>
-
     <audio id="bgMusic" loop preload="none">
         <source src="music/aboutyou.mp3" type="audio/mpeg">
     </audio>
@@ -287,13 +279,6 @@
     </section>
 
     <script>
-        function setVh() {
-            document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-        }
-        setVh();
-        window.addEventListener('resize', setVh);
-        window.addEventListener('orientationchange', function () { setTimeout(setVh, 300); });
-
         var music = document.getElementById('bgMusic');
         var musicHint = document.getElementById('musicHint');
         music.volume = 0.3;
